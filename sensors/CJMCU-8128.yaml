@@ -7,10 +7,15 @@ sensor:
       name: "CJMCU-8128 CCS811 Total Volatile Organic Compound"
     #address: 0x5A
     update_interval: 60s
+    #baseline: 0xA483 # After 20-30 min, check esp logs for baseline=, needs recalib over time
+    #temperature: cjmcu_temp # Optional, can improve readings
+    #humidity: cjmcu_humid # Optional, can improve readings
+
 
   - platform: bmp280_i2c
     temperature:
       name: "CJMCU-8128 Outside Temperature"
+      id: cjmcu_temp
       oversampling: 16x
     pressure:
       name: "CJMCU-8128 Outside Pressure"
@@ -18,10 +23,18 @@ sensor:
     update_interval: 60s
 
   - platform: htu21d
-    model: htu21d
+    model: SI7021 #htu21d
     temperature:
       name: "CJMCU-8128 Temperature"
     humidity:
       name: "CJMCU-8128 Humidity"
+      id: cjmcu_humid
     heater:
       name: "CJMCU-8128 Heater"
+  
+  # Example configuration entry for abs humidity
+  - platform: absolute_humidity
+    name: Absolute Humidity
+    temperature: cjmcu_temp
+    humidity: cjmcu_humid
+    #equation: #(Optional): The saturated vapor pressure equation to use (see below).
