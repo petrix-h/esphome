@@ -1,0 +1,16 @@
+# Need to also have i2c setup, for instance: 
+# i2c:
+#   sda: GPIO05
+#   scl: GPIO18
+#   scan: true
+#   #id: bus_a
+
+sensor:
+  - platform: htu21d
+    model: htu21d
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    heater:
+      name: "Heater"
