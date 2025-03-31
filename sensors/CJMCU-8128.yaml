@@ -1,0 +1,27 @@
+# CJMCU-8128 Example configuration entry I2C
+sensor:
+  - platform: ccs811
+    eco2:
+      name: "CJMCU-8128 CCS811 eCO2 Value"
+    tvoc:
+      name: "CJMCU-8128 CCS811 Total Volatile Organic Compound"
+    #address: 0x5A
+    update_interval: 60s
+
+  - platform: bmp280_i2c
+    temperature:
+      name: "CJMCU-8128 Outside Temperature"
+      oversampling: 16x
+    pressure:
+      name: "CJMCU-8128 Outside Pressure"
+    address: 0x76
+    update_interval: 60s
+
+  - platform: htu21d
+    model: htu21d
+    temperature:
+      name: "CJMCU-8128 Temperature"
+    humidity:
+      name: "CJMCU-8128 Humidity"
+    heater:
+      name: "CJMCU-8128 Heater"
