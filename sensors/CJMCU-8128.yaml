@@ -31,6 +31,7 @@ sensor:
       id: cjmcu_humid
     heater:
       name: "CJMCU-8128 Heater"
+  #TODO enable heater: https://github.com/esphome/issues/issues/4975
   
   # Example configuration entry for abs humidity
   - platform: absolute_humidity
