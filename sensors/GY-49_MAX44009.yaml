@@ -1,0 +1,6 @@
+# GY-49 MAX44009 Ambient Light Sensor Example configuration entry I2C
+sensor:
+  - platform: max44009
+    name: "Luminosity (lux)"
+    #mode: low_power #(Optional, string): Measurement mode. One of auto, low_power, continuous.
+    #update_interval: 60s  #(Optional, Time): The interval to check the sensor. Defaults to 60s.
