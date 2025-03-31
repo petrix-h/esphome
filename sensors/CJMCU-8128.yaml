@@ -34,7 +34,7 @@ sensor:
   
   # Example configuration entry for abs humidity
   - platform: absolute_humidity
-    name: Absolute Humidity
+    name: "CJMCU-8128 Absolute Humidity"
     temperature: cjmcu_temp
     humidity: cjmcu_humid
     #equation: #(Optional): The saturated vapor pressure equation to use (see below).
