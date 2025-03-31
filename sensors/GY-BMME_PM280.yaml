@@ -1,0 +1,10 @@
+# GY-BMME/PM280 Example configuration entry I2C
+sensor:
+  - platform: bmp280_i2c
+    temperature:
+      name: "Outside Temperature"
+      oversampling: 16x
+    pressure:
+      name: "Outside Pressure"
+    address: 0x76
+    update_interval: 60s
