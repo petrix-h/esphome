@@ -1,0 +1,21 @@
+# GY-AS3935 Lightning detector
+
+# Example configuration for I²C
+as3935_i2c:
+  irq_pin: GPIO23
+  lightning_threshold: 5 #1,5,9 or 16
+  #spike_rejection: 10
+  #calibration: false
+  #indoor: false
+
+sensor:
+  - platform: as3935
+    lightning_energy:
+      name: Lightning Energy
+    distance:
+      name: Distance Storm
+
+# Example storm alert binary sensor
+binary_sensor:
+  - platform: as3935
+    name: Storm Alert
