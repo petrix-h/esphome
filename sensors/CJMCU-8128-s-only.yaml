@@ -1,4 +1,10 @@
 # CJMCU-8128 Example configuration entry I2C
+
+#After importing the file, baseline can be explicitly set through: 
+#sensor:
+#  - id: !extend ccs811_device
+#    baseline: 0x937C
+
 sensor:
   - platform: ccs811
     id: ccs811_device
