@@ -1,6 +1,7 @@
 # CJMCU-8128 Example configuration entry I2C
 sensor:
   - platform: ccs811
+    id: ccs811_device
     eco2:
       name: "CJMCU-8128 CCS811 eCO2 Value"
     tvoc:
