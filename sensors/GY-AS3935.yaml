@@ -1,4 +1,5 @@
 # GY-AS3935 Lightning detector
+# Even when supposedly connected, the i2c scan doesn't seem to show it, however, if indoor is set to true, it will start to send events... 
 
 # Example configuration for I²C
 as3935_i2c:
