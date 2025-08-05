@@ -22,13 +22,37 @@ sensor:
     address: 0x76
     update_interval: 60s
 
-  - platform: htu21d
+  - platform: htu21d #seems broken
     model: SI7021 #htu21d
+    id: cjmcu_8188_si7021_with_heater
     temperature:
       name: "CJMCU-8128 Temperature"
-    humidity:
+      disabled_by_default: True
+      entity_category: "diagnostic"
+    humidity: #seems broken
       name: "CJMCU-8128 Humidity"
       id: cjmcu_humid
+      #internal: True
+      disabled_by_default: True
+      entity_category: "diagnostic"
     heater:
       name: "CJMCU-8128 Heater"
-  #TODO enable heater: https://github.com/esphome/issues/issues/4975
+      internal: True
+
+#Turn on the heater... https://github.com/esphome/issues/issues/4975
+switch: #doesn't seem to work but the sensor itself also seems broken
+  - platform: template
+    name: "Garage Sensor Heater Switch"
+    restore_mode: disabled
+    disabled_by_default: True
+    entity_category: "diagnostic"
+    lambda: |-
+      return id(cjmcu_8188_si7021_with_heater).is_heater_enabled();
+    turn_on_action:
+      - lambda: |-
+            id(cjmcu_8188_si7021_with_heater).set_heater_level(4);
+            id(cjmcu_8188_si7021_with_heater).set_heater(true);
+    turn_off_action:
+      - lambda: |-
+            id(cjmcu_8188_si7021_with_heater).set_heater_level(0);
+            id(cjmcu_8188_si7021_with_heater).set_heater(false);
