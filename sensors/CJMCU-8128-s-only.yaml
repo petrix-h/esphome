@@ -37,7 +37,8 @@ sensor:
       entity_category: "diagnostic"
     heater:
       name: "CJMCU-8128 Heater"
-      internal: True
+      disabled_by_default: True
+      entity_category: "diagnostic"
 
 #Turn on the heater... https://github.com/esphome/issues/issues/4975
 switch: #doesn't seem to work but the sensor itself also seems broken
