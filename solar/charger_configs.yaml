@@ -1,0 +1,165 @@
+esphome:
+  name: esphome-web-a593fb
+  friendly_name: ESPHome Web a593fb
+  min_version: 2025.5.0
+  name_add_mac_suffix: false
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Optional manual IP
+  #manual_ip:
+  #  static_ip: 192.168.0.123
+  #  gateway: 192.168.0.1
+  #  subnet: 255.255.255.0
+
+i2c:
+  sda: GPIO04
+  scl: GPIO05
+  scan: true
+  #id: bus_a
+
+#packages:
+#  remote_package_files:
+#    url: https://github.com/petrix-h/esphome
+#    files: [sensors/CJMCU-8128-s-only.yaml]  # optional; if not specified, all files will be included
+#    ref: main  # optional
+#    refresh: always  # optional
+
+sensor:
+  - platform: wifi_signal
+    id: wifi_signal_db
+    name: "WiFi Signal Sensor"
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+    device_class: ""
+
+  - platform: ads1115
+    multiplexer: 'A0_GND'
+    gain: 4.096
+    name: "Battery Voltage (A0)"
+    id: bat_volt
+    update_interval: 30s
+    entity_category: "diagnostic"
+    filters:
+      - multiply: 1.56
+
+  - platform: ads1115
+    multiplexer: 'A1_GND'
+    gain: 4.096
+    name: "Solar Panel Voltage (A1) "
+    id: pv_volt
+    update_interval: 30s
+    entity_category: "diagnostic"
+    filters:
+      - multiply: 2 # (100k + 100k) / 100k = 2 
+
+  - platform: ads1115
+    multiplexer: 'A2_GND'
+    gain: 1.024
+    name: "Charge Current (A2) "
+    id: charge_curr
+    unit_of_measurement: "A"
+    entity_category: "diagnostic"
+    update_interval: 30s
+    filters:
+      - lambda: return (x / 10000.0f) * 1200.0f;
+    #- lambda: return 27 - (x - 0.706f) / 0.001721f;
+
+  - platform: template
+    unit_of_measurement: "W"
+    icon: "mdi:flash"
+    entity_category: "diagnostic"
+    id: charge_watt
+    name: "Charge Watts"
+    device_class: power
+    update_interval: 30s
+    accuracy_decimals: 4
+    lambda: return id(pv_volt).state * id(charge_curr).state; 
+
+  - platform: total_daily_energy #requires time
+    name: 'Total Daily Generated Energy'
+    power_id: charge_watt
+    id: daily_gen
+    unit_of_measurement: 'Wh' #'kWh'
+    state_class: total_increasing
+    device_class: energy
+    entity_category: "diagnostic"
+    accuracy_decimals: 3
+    #filters:
+      # Multiplication factor from W to kW is 0.001
+      #- multiply: 0.001
+    
+    # Lifetime generated
+  - platform: integration
+    name: 'Total Generated Energy'
+    sensor: charge_watt
+    time_unit: h
+    restore: true
+    state_class: total_increasing
+    device_class: energy
+    entity_category: "diagnostic"
+    accuracy_decimals: 3
+
+ads1115:
+  - address: 0x48
+
+# Enable time component to reset energy at midnight
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+# Example configuration entry
+# text_sensor:
+#   - platform: wifi_info
+ 
+#     ip_address:
+#       entity_category: "diagnostic"
+#       name: ESP IP Address
+#       address_0:
+#         name: ESP IP Address 0
+#       address_1:
+#         name: ESP IP Address 1
+#       address_2:
+#         name: ESP IP Address 2
+#       address_3:
+#         name: ESP IP Address 3
+#       address_4:
+#         name: ESP IP Address 4
+#     ssid:
+#       entity_category: "diagnostic"
+#       name: ESP Connected SSID
+#     bssid:
+#       entity_category: "diagnostic"
+#       name: ESP Connected BSSID
+#     mac_address:
+#       entity_category: "diagnostic"
+#       name: ESP Mac Wifi Address
+#     scan_results:
+#       entity_category: "diagnostic"
+#       name: ESP Latest Scan Results
+#     dns_address:
+#       entity_category: "diagnostic"
+#       name: ESP DNS Address
