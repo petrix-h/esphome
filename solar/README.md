@@ -1,12 +1,14 @@
 # TODO Document better
 
 - 5V 1W solar panel -> TP4056 -> 18650 cell (protected) 
-- 18650 cell -> 1702 -> ESP32-S2
+- 18650 cell -> 1702 -> ESP32-S2 (yaml originally for ESP8266 but S2 has better deep sleep) 
 - ADS1115 over I2C
 
 TODO: 
 - add temperature sensor for solarpanel
 - add temperature sensor for 18650 cell
+- add INA219 or something sensor for monitoring battery current (and voltage)
+  - make ESP sensor that calculates consumed power, if it also reads neg current then could use +/- to calc daily gain/loss
 - consider a i2c temp/hum sensor if all is in a enclosure
 - consider a water sensor (figure out how) with 2 wires at the bottom of enclosure and GPIO enabled checks to stop it from trying to become an electrolyser and empty the battery
 - figure out how to do OTA's properly with HA toggle button thing
