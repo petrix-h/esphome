@@ -1,6 +1,6 @@
 # TODO Document better
 
-- 5V 1W solar panel -> TP4056 -> 18650 cell
+- 5V 1W solar panel -> TP4056 -> 18650 cell (protected) 
 - 18650 cell -> 1702 -> ESP32-S2
 - ADS1115 over I2C
 
@@ -48,3 +48,5 @@ ADS1115
 
 ### Inspirations
 - https://www.youtube.com/channel/UC7QFnHZ-c0i2T5F4BJ8vwsA
+- https://youtu.be/37kGva3NW8w?feature=shared
+- https://youtu.be/f2yMs-JAyQM?feature=shared
