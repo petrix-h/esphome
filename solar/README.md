@@ -52,3 +52,44 @@ ADS1115
 - https://www.youtube.com/channel/UC7QFnHZ-c0i2T5F4BJ8vwsA
 - https://youtu.be/37kGva3NW8w?feature=shared
 - https://youtu.be/f2yMs-JAyQM?feature=shared
+
+
+# Deep Sleep
+In order to have the ESP save power enable deep sleep. However, in order to allow updates we want a way to prevent the ESP from sleeping. Idea mainly from here: https://tatham.blog/2021/02/06/esphome-batteries-deep-sleep-and-over-the-air-updates/ but with a few tweaks: 
+
+1. In Home Assistant, go to settings -> Devices and Services -> Helpers
+2. Add a new "Toggle" helper
+3. name it "ESPHome Prevent Deep Sleep"
+4. Take note of the entity id for it once it's created, should be `input_boolean.esphome_prevent_deep_sleep` if not you'll need to fix the scripts later...
+
+In your ESPs configurations add a `deep_sleep` component and a new text sensor that is updated from HA -> ESP
+
+```
+deep_sleep:
+  id: deep_sleep_control
+  run_duration: 60s
+  sleep_duration: 30s
+
+
+
+binary_sensor:
+  - platform: homeassistant
+    id: esphome_prevent_deep_sleep
+    name: Esphome Prevent Deep Sleep
+    entity_id: input_boolean.esphome_prevent_deep_sleep
+    trigger_on_initial_state: True
+    on_state: 
+      then:
+      - if: 
+          condition:
+            binary_sensor.is_on: esphome_prevent_deep_sleep
+          then: 
+            - logger.log: "Disabling deep sleep, prevent is on..."
+            - deep_sleep.prevent: deep_sleep_control
+          else: 
+            #- deep_sleep.enter: deep_sleep_control
+            - logger.log: "Allowing deep sleep..."
+            - deep_sleep.allow: deep_sleep_control
+```
+
+The "trigger on intial" part will make the on_state happen every time the esp boots... 
