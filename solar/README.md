@@ -70,8 +70,6 @@ deep_sleep:
   run_duration: 60s
   sleep_duration: 30s
 
-
-
 binary_sensor:
   - platform: homeassistant
     id: esphome_prevent_deep_sleep
