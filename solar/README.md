@@ -87,7 +87,6 @@ binary_sensor:
             - logger.log: "Disabling deep sleep, prevent is on..."
             - deep_sleep.prevent: deep_sleep_control
           else: 
-            #- deep_sleep.enter: deep_sleep_control
             - logger.log: "Allowing deep sleep..."
             - deep_sleep.allow: deep_sleep_control
 ```
