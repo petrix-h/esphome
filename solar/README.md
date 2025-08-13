@@ -93,6 +93,9 @@ The "trigger on intial" part will make the on_state happen every time the esp bo
 
 When testing, keep the run_duration high enough that you can reflash tings if they fail :P and then later reduce it to for instance 20s and (600 - 20) 580s for a 20 second duty cycle every 10 mintues... or what ever you need.. 
 
+### IF IT DOESNT SEEM TO WORK!!!
+In order for the value to be pushed to the ESP, HA needs to have the board imported, so if not already done, go to HA "Devices and Services" and add the ESP to your HA instance!!!
+
 # Additional power reductions
 
 ESP32-S2 board: 
