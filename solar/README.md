@@ -46,7 +46,7 @@ ADS1115
 
 1702 3.3v LDO regulator
 - using 2.2 uF tantalum caps instaead of 1uF, seems to work fine..
-- possibly needing a large cap (2200uF tested) on regulated side if/when ESP starts to have more sensors, otherwise occationally bootloops.. Could also be the battery (not the best)
+- possibly needing a large cap (2200uF, 22uF and 100nF Electrolyics tested, all seem to fix it) on regulated side if/when ESP starts to have more sensors, otherwise occationally bootloops.. Could also be the battery (not the best)
 
 ### Inspirations
 - https://www.youtube.com/channel/UC7QFnHZ-c0i2T5F4BJ8vwsA
@@ -92,3 +92,23 @@ binary_sensor:
 The "trigger on intial" part will make the on_state happen every time the esp boots... 
 
 When testing, keep the run_duration high enough that you can reflash tings if they fail :P and then later reduce it to for instance 20s and (600 - 20) 580s for a 20 second duty cycle every 10 mintues... or what ever you need.. 
+
+# Additional power reductions
+
+ESP32-S2 board: 
+
+```
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  fast_connect: True
+  power_save_mode: HIGH
+  output_power: 8.5dB
+  enable_rrm: True
+
+  manual_ip:
+    static_ip: 192.168.xxx.yyy
+    gateway: 192.168.xxx.1
+    subnet: 255.255.255.0
+```
