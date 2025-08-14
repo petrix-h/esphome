@@ -45,8 +45,8 @@ ADS1115
 - A2 = Charge current, TP4056 gives charge current in mV (max 1V @ 1A) so no voltage divider needed direct connection to PROG pin
 
 1702 3.3v LDO regulator
-- using 2.2 uF tantalum caps instaead of 1uF, seems to work fine..
 - possibly needing a large cap (2200uF, 22uF and 100nF Electrolyics tested, all seem to fix it) on regulated side if/when ESP starts to have more sensors, otherwise occationally bootloops.. Could also be the battery (not the best)
+- the recommended 1uF caps on both sides seems to cause the regulator to consume more power when idle (into the mA range)... where as a single Electrolytic cap on the regulated side only keeps the idle power use at around 20-40uA
 
 ### Inspirations
 - https://www.youtube.com/channel/UC7QFnHZ-c0i2T5F4BJ8vwsA
