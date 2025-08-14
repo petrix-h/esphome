@@ -2,5 +2,6 @@
 sensor:
   - platform: max44009
     name: "Luminosity (lux)"
+    id: gy_max44_light_sensor
     #mode: low_power #(Optional, string): Measurement mode. One of auto, low_power, continuous.
     #update_interval: 60s  #(Optional, Time): The interval to check the sensor. Defaults to 60s.
