@@ -2,6 +2,16 @@ sensor:
   - platform: wifi_signal
     name: "${friendly_name} - WiFi Signal"
     update_interval: 120s
+    entity_category: "diagnostic"
+
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "WiFi Signal Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "Signal %"
+    entity_category: "diagnostic"
+    device_class: ""
 
 text_sensor: 
   - platform: wifi_info
@@ -11,3 +21,4 @@ text_sensor:
     ssid:
       name: '${friendly_name} - Connected SSID'
       icon: mdi:wifi-strength-2
+    entity_category: "diagnostic"
