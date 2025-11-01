@@ -195,13 +195,13 @@ speaker:
     #buffer_duration: 100ms
     #mode: mono
 
-  - platform: mixer
-    output_speaker: box_speaker
-    #task_stack_in_psram: True
-    num_channels: 1
-    source_speakers:
-      - id: announcement_mixer_input_speaker_id
-      - id: media_mixer_input_speaker_id
+  # - platform: mixer
+  #   output_speaker: box_speaker
+  #   #task_stack_in_psram: True
+  #   num_channels: 1
+  #   source_speakers:
+  #     - id: announcement_mixer_input_speaker_id
+  #     - id: media_mixer_input_speaker_id
 
 media_player:
   - platform: speaker
@@ -210,15 +210,15 @@ media_player:
     #buffer_size: 10000
     #codec_support_enabled: false
     #task_stack_in_psram: true
-    volume_min: 0.5
-    volume_max: 0.8
-    media_pipeline: 
-      speaker: media_mixer_input_speaker_id
-      format: FLAC
-      sample_rate: 48000
-      num_channels: 1
+    #volume_min: 0.5
+    #volume_max: 0.8
+    #media_pipeline: 
+    #  speaker: media_mixer_input_speaker_id
+    #  format: FLAC
+    #  sample_rate: 48000
+    #  num_channels: 1
     announcement_pipeline:
-      speaker: announcement_mixer_input_speaker_id
+      speaker: box_speaker
       format: FLAC
       sample_rate: 48000
       num_channels: 1  # S3 Box only has one output channel
@@ -273,8 +273,8 @@ voice_assistant:
   id: va
   microphone: box_mic
   #media_player: speaker_media_player
-  speaker: announcement_mixer_input_speaker_id
-  #speaker: box_speaker
+  #speaker: announcement_mixer_input_speaker_id
+  speaker: box_speaker
   micro_wake_word: mww
   noise_suppression_level: 2
   auto_gain: 31dBFS
