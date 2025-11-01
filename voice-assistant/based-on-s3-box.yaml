@@ -4,15 +4,16 @@ substitutions:
   #name: esp32-s3-box-3
   name: esp32-s3-voice-assistant
   friendly_name: ESP32 S3 Voice Assistant
-  loading_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/loading_320_240.png
-  idle_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/idle_320_240.png
-  listening_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/listening_320_240.png
-  thinking_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/thinking_320_240.png
-  replying_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/replying_320_240.png
-  error_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/error_320_240.png
-  timer_finished_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/timer_finished_320_240.png
-  loading_err_no_wifi_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-wifi.png
-  loading_err_no_ha_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-ha.png
+  
+  # loading_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/loading_320_240.png
+  # idle_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/idle_320_240.png
+  # listening_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/listening_320_240.png
+  # thinking_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/thinking_320_240.png
+  # replying_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/replying_320_240.png
+  # error_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/error_320_240.png
+  # timer_finished_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/timer_finished_320_240.png
+  # loading_err_no_wifi_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-wifi.png
+  # loading_err_no_ha_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-ha.png
 
   loading_illustration_background_color: "000000"
   idle_illustration_background_color: "000000"
@@ -662,52 +663,52 @@ globals:
     type: bool
     restore_value: false
 
-image:
-  - file: ${error_illustration_file}
-    id: casita_error
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${idle_illustration_file}
-    id: casita_idle
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${listening_illustration_file}
-    id: casita_listening
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${thinking_illustration_file}
-    id: casita_thinking
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${replying_illustration_file}
-    id: casita_replying
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${timer_finished_illustration_file}
-    id: casita_timer_finished
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${loading_illustration_file}
-    id: casita_initializing
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${loading_err_no_wifi_file}
-    id: error_no_wifi
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${loading_err_no_ha_file}
-    id: error_no_ha
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
+# image:
+#   - file: ${error_illustration_file}
+#     id: casita_error
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${idle_illustration_file}
+#     id: casita_idle
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${listening_illustration_file}
+#     id: casita_listening
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${thinking_illustration_file}
+#     id: casita_thinking
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${replying_illustration_file}
+#     id: casita_replying
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${timer_finished_illustration_file}
+#     id: casita_timer_finished
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${loading_illustration_file}
+#     id: casita_initializing
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${loading_err_no_wifi_file}
+#     id: error_no_wifi
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
+#   - file: ${loading_err_no_ha_file}
+#     id: error_no_ha
+#     resize: 320x240
+#     type: RGB
+#     transparency: alpha_channel
 
 # font:
 #   - file:
@@ -796,18 +797,18 @@ display:
       - id: idle_page
         lambda: |-
           it.fill(id(idle_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: listening_page
         lambda: |-
           it.fill(id(listening_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_listening), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_listening), ImageAlign::CENTER);
           id(draw_timer_timeline).execute();
       - id: thinking_page
         lambda: |-
           it.fill(id(thinking_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
           it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
           it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
           //it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
@@ -815,7 +816,7 @@ display:
       - id: replying_page
         lambda: |-
           it.fill(id(replying_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
           it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
           it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
           it.filled_rectangle(20 , 190 , 280 , 30 , Color::WHITE );
@@ -826,21 +827,21 @@ display:
       - id: timer_finished_page
         lambda: |-
           it.fill(id(idle_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_timer_finished), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_timer_finished), ImageAlign::CENTER);
       - id: error_page
         lambda: |-
           it.fill(id(error_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
       - id: no_ha_page
         lambda: |-
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
       - id: no_wifi_page
         lambda: |-
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
       - id: initializing_page
         lambda: |-
           it.fill(id(loading_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
+          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
       - id: muted_page
         lambda: |-
           it.fill(Color::BLACK);
