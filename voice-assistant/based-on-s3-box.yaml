@@ -48,19 +48,19 @@ esphome:
   on_boot:
     priority: 600
     then:
-      - script.execute: draw_display
+      #- script.execute: draw_display
       - delay: 30s
       - if:
           condition:
             lambda: return id(init_in_progress);
           then:
             - lambda: id(init_in_progress) = false;
-            - script.execute: draw_display
+            #- script.execute: draw_display
 
 esp32:
   board: esp32-s3-devkitc-1
   variant: ESP32S3
-  flash_size: 4MB
+  #flash_size: 4MB
   framework:
     type: esp-idf
 
@@ -75,10 +75,10 @@ esp32_ble:
 api:
   encryption:
      key: !secret tutorial-voice-assistant-encryption-key
-  on_client_connected:
-    - script.execute: draw_display
-  on_client_disconnected:
-    - script.execute: draw_display
+  #on_client_connected:
+    #- script.execute: draw_display
+  #on_client_disconnected:
+    #- script.execute: draw_display
 
 # Allow Over-The-Air updates
 ota:
@@ -96,13 +96,13 @@ wifi:
     static_ip: 192.168.189.28
     gateway: 192.168.189.1
     subnet: 255.255.255.0
-  ap:
-  on_connect:
-    - script.execute: draw_display
-  on_disconnect:
-    - script.execute: draw_display
+  #ap:
+  #on_connect:
+    #- script.execute: draw_display
+  #on_disconnect:
+    #- script.execute: draw_display
 
-captive_portal:
+#captive_portal:
 
 # button:
 #   - platform: factory_reset
@@ -227,7 +227,7 @@ media_player:
               voice_assistant.is_running:
           then:
             - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
-            - script.execute: draw_display
+           # - script.execute: draw_display
     on_idle:
       # Since VA isn't running, this is the end of user-intiated media playback. Restart the wake word.
       - if:
@@ -237,7 +237,7 @@ media_player:
           then:
             - script.execute: start_wake_word
             - script.execute: set_idle_or_mute_phase
-            - script.execute: draw_display
+           # - script.execute: draw_display
 
 micro_wake_word:
   id: mww
@@ -265,21 +265,21 @@ voice_assistant:
     - text_sensor.template.publish:
         id: text_response
         state: "..."
-    - script.execute: draw_display
+    #- script.execute: draw_display
   on_stt_vad_end:
     - lambda: id(voice_assistant_phase) = ${voice_assist_thinking_phase_id};
-    - script.execute: draw_display
+    #- script.execute: draw_display
   on_stt_end:
     - text_sensor.template.publish:
         id: text_request
         state: !lambda return x;
-    - script.execute: draw_display
+    #- script.execute: draw_display
   on_tts_start:
     - text_sensor.template.publish:
         id: text_response
         state: !lambda return x;
     - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
-    - script.execute: draw_display
+    #- script.execute: draw_display
   on_end:
     # Wait a short amount of time to see if an announcement starts
     - wait_until:
@@ -301,7 +301,7 @@ voice_assistant:
           - lambda: id(va).set_use_wake_word(false);
           - micro_wake_word.start:
     - script.execute: set_idle_or_mute_phase
-    - script.execute: draw_display
+    #- script.execute: draw_display
     # Clear text sensors
     - text_sensor.template.publish:
         id: text_request
@@ -315,7 +315,7 @@ voice_assistant:
           lambda: return !id(init_in_progress);
         then:
           - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
-          - script.execute: draw_display
+      #    - script.execute: draw_display
           - delay: 1s
           - if:
               condition:
@@ -324,179 +324,179 @@ voice_assistant:
                 - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
               else:
                 - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
-          - script.execute: draw_display
+     #     - script.execute: draw_display
   on_client_connected:
     - lambda: id(init_in_progress) = false;
     - script.execute: start_wake_word
     - script.execute: set_idle_or_mute_phase
-    - script.execute: draw_display
+    #- script.execute: draw_display
   on_client_disconnected:
     - script.execute: stop_wake_word
     - lambda: id(voice_assistant_phase) = ${voice_assist_not_ready_phase_id};
-    - script.execute: draw_display
-  on_timer_started:
-    - script.execute: draw_display
-  on_timer_cancelled:
-    - script.execute: draw_display
-  on_timer_updated:
-    - script.execute: draw_display
-  on_timer_tick:
-    - script.execute: draw_display
+    #- script.execute: draw_display
+  #on_timer_started:
+    #- script.execute: draw_display
+  #on_timer_cancelled:
+    #- script.execute: draw_display
+  #on_timer_updated:
+    #- script.execute: draw_display
+  #on_timer_tick:
+    #- script.execute: draw_display
   on_timer_finished:
     - switch.turn_on: timer_ringing
     - wait_until:
         media_player.is_announcing:
     - lambda: id(voice_assistant_phase) = ${voice_assist_timer_finished_phase_id};
-    - script.execute: draw_display
+    #- script.execute: draw_display
 
 script:
-  - id: draw_display
-    then:
-      - if:
-          condition:
-            lambda: return !id(init_in_progress);
-          then:
-            - if:
-                condition:
-                  wifi.connected:
-                then:
-                  - if:
-                      condition:
-                        api.connected:
-                      then:
-                        - lambda: |
-                            switch(id(voice_assistant_phase)) {
-                              case ${voice_assist_listening_phase_id}:
-                                id(s3_box_lcd).show_page(listening_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_thinking_phase_id}:
-                                id(s3_box_lcd).show_page(thinking_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_replying_phase_id}:
-                                id(s3_box_lcd).show_page(replying_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_error_phase_id}:
-                                id(s3_box_lcd).show_page(error_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_muted_phase_id}:
-                                id(s3_box_lcd).show_page(muted_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_not_ready_phase_id}:
-                                id(s3_box_lcd).show_page(no_ha_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              case ${voice_assist_timer_finished_phase_id}:
-                                id(s3_box_lcd).show_page(timer_finished_page);
-                                id(s3_box_lcd).update();
-                                break;
-                              default:
-                                id(s3_box_lcd).show_page(idle_page);
-                                id(s3_box_lcd).update();
-                            }
-                      else:
-                        - display.page.show: no_ha_page
-                        - component.update: s3_box_lcd
-                else:
-                  - display.page.show: no_wifi_page
-                  - component.update: s3_box_lcd
-          else:
-            - display.page.show: initializing_page
-            - component.update: s3_box_lcd
+  # - id: draw_display
+  #   then:
+  #     - if:
+  #         condition:
+  #           lambda: return !id(init_in_progress);
+  #         then:
+  #           - if:
+  #               condition:
+  #                 wifi.connected:
+  #               then:
+  #                 - if:
+  #                     condition:
+  #                       api.connected:
+  #                     then:
+  #                       - lambda: |
+  #                           switch(id(voice_assistant_phase)) {
+  #                             case ${voice_assist_listening_phase_id}:
+  #                               id(s3_box_lcd).show_page(listening_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_thinking_phase_id}:
+  #                               id(s3_box_lcd).show_page(thinking_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_replying_phase_id}:
+  #                               id(s3_box_lcd).show_page(replying_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_error_phase_id}:
+  #                               id(s3_box_lcd).show_page(error_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_muted_phase_id}:
+  #                               id(s3_box_lcd).show_page(muted_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_not_ready_phase_id}:
+  #                               id(s3_box_lcd).show_page(no_ha_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             case ${voice_assist_timer_finished_phase_id}:
+  #                               id(s3_box_lcd).show_page(timer_finished_page);
+  #                               id(s3_box_lcd).update();
+  #                               break;
+  #                             default:
+  #                               id(s3_box_lcd).show_page(idle_page);
+  #                               id(s3_box_lcd).update();
+  #                           }
+  #                     else:
+  #                       - display.page.show: no_ha_page
+  #                       - component.update: s3_box_lcd
+  #               else:
+  #                 - display.page.show: no_wifi_page
+  #                 - component.update: s3_box_lcd
+  #         else:
+  #           - display.page.show: initializing_page
+  #           - component.update: s3_box_lcd
 
-  - id: fetch_first_active_timer
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          auto output_timer = timers.begin()->second;
-          for (auto &iterable_timer : timers) {
-            if (iterable_timer.second.is_active && iterable_timer.second.seconds_left <= output_timer.seconds_left) {
-              output_timer = iterable_timer.second;
-            }
-          }
-          id(global_first_active_timer) = output_timer;
-  - id: check_if_timers_active
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          bool output = false;
-          if (timers.size() > 0) {
-            for (auto &iterable_timer : timers) {
-              if(iterable_timer.second.is_active) {
-                output = true;
-              }
-            }
-          }
-          id(global_is_timer_active) = output;
-  - id: fetch_first_timer
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          auto output_timer = timers.begin()->second;
-          for (auto &iterable_timer : timers) {
-            if (iterable_timer.second.seconds_left <= output_timer.seconds_left) {
-              output_timer = iterable_timer.second;
-            }
-          }
-          id(global_first_timer) = output_timer;
-  - id: check_if_timers
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          bool output = false;
-          if (timers.size() > 0) {
-            output = true;
-          }
-          id(global_is_timer) = output;
+  # - id: fetch_first_active_timer
+  #   then:
+  #     - lambda: |
+  #         const auto timers = id(va).get_timers();
+  #         auto output_timer = timers.begin()->second;
+  #         for (auto &iterable_timer : timers) {
+  #           if (iterable_timer.second.is_active && iterable_timer.second.seconds_left <= output_timer.seconds_left) {
+  #             output_timer = iterable_timer.second;
+  #           }
+  #         }
+  #         id(global_first_active_timer) = output_timer;
+  # - id: check_if_timers_active
+  #   then:
+  #     - lambda: |
+  #         const auto timers = id(va).get_timers();
+  #         bool output = false;
+  #         if (timers.size() > 0) {
+  #           for (auto &iterable_timer : timers) {
+  #             if(iterable_timer.second.is_active) {
+  #               output = true;
+  #             }
+  #           }
+  #         }
+  #         id(global_is_timer_active) = output;
+  # - id: fetch_first_timer
+  #   then:
+  #     - lambda: |
+  #         const auto timers = id(va).get_timers();
+  #         auto output_timer = timers.begin()->second;
+  #         for (auto &iterable_timer : timers) {
+  #           if (iterable_timer.second.seconds_left <= output_timer.seconds_left) {
+  #             output_timer = iterable_timer.second;
+  #           }
+  #         }
+  #         id(global_first_timer) = output_timer;
+  # - id: check_if_timers
+  #   then:
+  #     - lambda: |
+  #         const auto timers = id(va).get_timers();
+  #         bool output = false;
+  #         if (timers.size() > 0) {
+  #           output = true;
+  #         }
+  #         id(global_is_timer) = output;
 
-  - id: draw_timer_timeline
-    then:
-      - lambda: |
-          id(check_if_timers_active).execute();
-          id(check_if_timers).execute();
-          if (id(global_is_timer_active)){
-            id(fetch_first_active_timer).execute();
-            int active_pixels = round( 320 * id(global_first_active_timer).seconds_left / max(id(global_first_active_timer).total_seconds , static_cast<uint32_t>(1)) );
-            if (active_pixels > 0){
-              id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
-              id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(active_timer_color) );
-            }
-          } else if (id(global_is_timer)){
-            id(fetch_first_timer).execute();
-            int active_pixels = round( 320 * id(global_first_timer).seconds_left / max(id(global_first_timer).total_seconds , static_cast<uint32_t>(1)));
-            if (active_pixels > 0){
-              id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
-              id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(paused_timer_color) );
-            }
-          }
-  - id: draw_active_timer_widget
-    then:
-      - lambda: |
-          id(check_if_timers_active).execute();
-          if (id(global_is_timer_active)){
-            id(s3_box_lcd).filled_rectangle(80 , 40 , 160 , 50 , Color::WHITE );
-            id(s3_box_lcd).rectangle(80 , 40 , 160 , 50 , Color::BLACK );
+  # - id: draw_timer_timeline
+  #   then:
+  #     - lambda: |
+  #         id(check_if_timers_active).execute();
+  #         id(check_if_timers).execute();
+  #         if (id(global_is_timer_active)){
+  #           id(fetch_first_active_timer).execute();
+  #           int active_pixels = round( 320 * id(global_first_active_timer).seconds_left / max(id(global_first_active_timer).total_seconds , static_cast<uint32_t>(1)) );
+  #           if (active_pixels > 0){
+  #             id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
+  #             id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(active_timer_color) );
+  #           }
+  #         } else if (id(global_is_timer)){
+  #           id(fetch_first_timer).execute();
+  #           int active_pixels = round( 320 * id(global_first_timer).seconds_left / max(id(global_first_timer).total_seconds , static_cast<uint32_t>(1)));
+  #           if (active_pixels > 0){
+  #             id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
+  #             id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(paused_timer_color) );
+  #           }
+  #         }
+  # - id: draw_active_timer_widget
+  #   then:
+  #     - lambda: |
+  #         id(check_if_timers_active).execute();
+  #         if (id(global_is_timer_active)){
+  #           id(s3_box_lcd).filled_rectangle(80 , 40 , 160 , 50 , Color::WHITE );
+  #           id(s3_box_lcd).rectangle(80 , 40 , 160 , 50 , Color::BLACK );
 
-            id(fetch_first_active_timer).execute();
-            int hours_left = floor(id(global_first_active_timer).seconds_left / 3600);
-            int minutes_left = floor((id(global_first_active_timer).seconds_left - hours_left * 3600) / 60);
-            int seconds_left = id(global_first_active_timer).seconds_left - hours_left * 3600 - minutes_left * 60 ;
-            auto display_hours = (hours_left < 10 ? "0" : "") + std::to_string(hours_left);
-            auto display_minute = (minutes_left < 10 ? "0" : "") + std::to_string(minutes_left);
-            auto display_seconds = (seconds_left  < 10 ? "0" : "") + std::to_string(seconds_left) ;
+  #           id(fetch_first_active_timer).execute();
+  #           int hours_left = floor(id(global_first_active_timer).seconds_left / 3600);
+  #           int minutes_left = floor((id(global_first_active_timer).seconds_left - hours_left * 3600) / 60);
+  #           int seconds_left = id(global_first_active_timer).seconds_left - hours_left * 3600 - minutes_left * 60 ;
+  #           auto display_hours = (hours_left < 10 ? "0" : "") + std::to_string(hours_left);
+  #           auto display_minute = (minutes_left < 10 ? "0" : "") + std::to_string(minutes_left);
+  #           auto display_seconds = (seconds_left  < 10 ? "0" : "") + std::to_string(seconds_left) ;
 
-            std::string display_string = "";
-            if (hours_left > 0) {
-              display_string = display_hours + ":" + display_minute;
-            } else {
-              display_string = display_minute + ":" + display_seconds;
-            }
-            //id(s3_box_lcd).printf(120, 47, id(font_timer), Color::BLACK, "%s", display_string.c_str());
-          }
+  #           std::string display_string = "";
+  #           if (hours_left > 0) {
+  #             display_string = display_hours + ":" + display_minute;
+  #           } else {
+  #             display_string = display_minute + ":" + display_seconds;
+  #           }
+  #           //id(s3_box_lcd).printf(120, 47, id(font_timer), Color::BLACK, "%s", display_string.c_str());
+  #         }
   # Starts either mWW or the streaming wake word, depending on the configured location
   - id: start_wake_word
     then:
@@ -560,11 +560,11 @@ switch:
     on_turn_off:
       - microphone.unmute:
       - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
-      - script.execute: draw_display
+      #- script.execute: draw_display
     on_turn_on:
       - microphone.mute:
       - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
-      - script.execute: draw_display
+      #- script.execute: draw_display
   - platform: template
     id: timer_ringing
     optimistic: true
@@ -776,77 +776,77 @@ color:
   - id: paused_timer_color
     hex: "3b89e3"
 
-spi:
-  - id: spi_bus
-    clk_pin: 12
-    mosi_pin: 13
+# spi:
+#   - id: spi_bus
+#     clk_pin: 12
+#     mosi_pin: 13
 
-display:
-  - platform: ili9xxx
-    id: s3_box_lcd
-    model: S3BOX
-    invert_colors: false
-    data_rate: 40MHz
-    cs_pin: 11
-    dc_pin: 10
-    reset_pin:
-      number: 9
-      inverted: true
-    update_interval: never
-    pages:
-      - id: idle_page
-        lambda: |-
-          it.fill(id(idle_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
-          id(draw_timer_timeline).execute();
-          id(draw_active_timer_widget).execute();
-      - id: listening_page
-        lambda: |-
-          it.fill(id(listening_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_listening), ImageAlign::CENTER);
-          id(draw_timer_timeline).execute();
-      - id: thinking_page
-        lambda: |-
-          it.fill(id(thinking_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
-          it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
-          //it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
-          id(draw_timer_timeline).execute();
-      - id: replying_page
-        lambda: |-
-          it.fill(id(replying_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
-          it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
-          it.filled_rectangle(20 , 190 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 190 , 280 , 30 , Color::BLACK );
-          //it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
-          //it.printf(30, 195, id(font_response), Color::BLACK, "%s", id(text_response).state.c_str());
-          id(draw_timer_timeline).execute();
-      - id: timer_finished_page
-        lambda: |-
-          it.fill(id(idle_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_timer_finished), ImageAlign::CENTER);
-      - id: error_page
-        lambda: |-
-          it.fill(id(error_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
-      - id: no_ha_page
-        lambda: |-
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
-      - id: no_wifi_page
-        lambda: |-
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
-      - id: initializing_page
-        lambda: |-
-          it.fill(id(loading_color));
-          //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
-      - id: muted_page
-        lambda: |-
-          it.fill(Color::BLACK);
-          id(draw_timer_timeline).execute();
-          id(draw_active_timer_widget).execute();
+# display:
+#   - platform: ili9xxx
+#     id: s3_box_lcd
+#     model: S3BOX
+#     invert_colors: false
+#     data_rate: 40MHz
+#     cs_pin: 11
+#     dc_pin: 10
+#     reset_pin:
+#       number: 9
+#       inverted: true
+#     update_interval: never
+    # pages:
+    #   - id: idle_page
+    #     lambda: |-
+    #       it.fill(id(idle_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
+    #       id(draw_timer_timeline).execute();
+    #       id(draw_active_timer_widget).execute();
+    #   - id: listening_page
+    #     lambda: |-
+    #       it.fill(id(listening_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_listening), ImageAlign::CENTER);
+    #       id(draw_timer_timeline).execute();
+    #   - id: thinking_page
+    #     lambda: |-
+    #       it.fill(id(thinking_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
+    #       it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
+    #       it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
+    #       //it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
+    #       id(draw_timer_timeline).execute();
+    #   - id: replying_page
+    #     lambda: |-
+    #       it.fill(id(replying_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
+    #       it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
+    #       it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
+    #       it.filled_rectangle(20 , 190 , 280 , 30 , Color::WHITE );
+    #       it.rectangle(20 , 190 , 280 , 30 , Color::BLACK );
+    #       //it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
+    #       //it.printf(30, 195, id(font_response), Color::BLACK, "%s", id(text_response).state.c_str());
+    #       id(draw_timer_timeline).execute();
+    #   - id: timer_finished_page
+    #     lambda: |-
+    #       it.fill(id(idle_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_timer_finished), ImageAlign::CENTER);
+    #   - id: error_page
+    #     lambda: |-
+    #       it.fill(id(error_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
+    #   - id: no_ha_page
+    #     lambda: |-
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
+    #   - id: no_wifi_page
+    #     lambda: |-
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
+    #   - id: initializing_page
+    #     lambda: |-
+    #       it.fill(id(loading_color));
+    #       //it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
+    #   - id: muted_page
+    #     lambda: |-
+    #       it.fill(Color::BLACK);
+    #       id(draw_timer_timeline).execute();
+    #       id(draw_active_timer_widget).execute();
 
 sensor:
   - platform: internal_temperature
