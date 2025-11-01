@@ -21,4 +21,3 @@ text_sensor:
     ssid:
       name: '${friendly_name} - Connected SSID'
       icon: mdi:wifi-strength-2
-    entity_category: "diagnostic"
