@@ -267,6 +267,7 @@ micro_wake_word:
   id: mww
   models:
     - okay_nabu
+    - alexa
 #    - hey_mycroft
 #    - hey_jarvis
   on_wake_word_detected:
