@@ -64,9 +64,6 @@ esp32:
   framework:
     type: esp-idf
 
-debug:
-  update_interval: 5s
-
 psram:
   mode: quad
   speed: 40MHz
@@ -106,6 +103,15 @@ wifi:
     #- script.execute: draw_display
 
 #captive_portal:
+
+packages:
+  remote_package_shorthand: github://petrix-h/esphome/config/debug.yaml@voice-assistant
+
+#   remote_package_files:
+#     url: https://github.com/petrix-h/esphome
+#     files: [configs/debug.yaml]  # optional; if not specified, all files will be included
+#     ref: main  # optional
+#     refresh: always  # optional
 
 # button:
 #   - platform: factory_reset
@@ -879,15 +885,3 @@ sensor:
   - platform: internal_temperature
     accuracy_decimals: 1
     name: "Internal Temp"
-
-  - platform: debug
-    free:
-      name: "Heap Free"
-    block:
-      name: "Heap Max Block"
-    loop_time:
-      name: "Loop Time"
-    psram:
-      name: "Free PSRAM"
-    cpu_frequency:
-      name: "CPU Frequency"
