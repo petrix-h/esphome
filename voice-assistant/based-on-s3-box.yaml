@@ -68,8 +68,8 @@ debug:
   update_interval: 5s
 
 psram:
-  mode: octal
-  speed: 80MHz
+  mode: quad
+  speed: 40MHz
 
 #Reduce power and heat
 #esp32_ble:
