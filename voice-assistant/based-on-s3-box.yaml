@@ -41,7 +41,7 @@ esphome:
   name: ${name}
   friendly_name: ${friendly_name}
   min_version: 2025.5.0
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   on_boot:
     priority: 600
     then:
@@ -55,34 +55,43 @@ esphome:
             - script.execute: draw_display
 
 esp32:
-  board: esp32s3box
-  flash_size: 16MB
-  cpu_frequency: 240MHz
+  board: esp32-s3-devkitc-1
+  variant: ESP32S3
   framework:
     type: esp-idf
-    sdkconfig_options:
-      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
-      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
-      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
 
 psram:
   mode: octal
   speed: 80MHz
 
+#Reduce power and heat
+esp32_ble:
+  enable_on_boot: false    
+
 api:
+  encryption:
+     key: !secret tutorial-voice-assistant-encryption-key
   on_client_connected:
     - script.execute: draw_display
   on_client_disconnected:
     - script.execute: draw_display
 
+# Allow Over-The-Air updates
 ota:
-  - platform: esphome
-    id: ota_esphome
+- platform: esphome
+  password: !secret tutorial-voice-assistant-ota-password
 
 logger:
-  hardware_uart: USB_SERIAL_JTAG
+#  hardware_uart: USB_SERIAL_JTAG
 
 wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.189.28
+    gateway: 192.168.189.1
+    subnet: 255.255.255.0
   ap:
   on_connect:
     - script.execute: draw_display
@@ -91,85 +100,92 @@ wifi:
 
 captive_portal:
 
-button:
-  - platform: factory_reset
-    id: factory_reset_btn
-    internal: true
+# button:
+#   - platform: factory_reset
+#     id: factory_reset_btn
+#     internal: true
 
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: true
-    id: left_top_button
-    internal: true
-    on_multi_click:
-      - timing:
-          - ON for at least 50ms
-          - OFF for at least 50ms
-        then:
-          - switch.turn_off: timer_ringing
-      - timing:
-          - ON for at least 10s
-        then:
-          - button.press: factory_reset_btn
+# binary_sensor:
+#   - platform: gpio
+#     pin:
+#       number: GPIO0
+#       mode: INPUT_PULLUP
+#       inverted: true
+#     id: left_top_button
+#     internal: true
+#     on_multi_click:
+#       - timing:
+#           - ON for at least 50ms
+#           - OFF for at least 50ms
+#         then:
+#           - switch.turn_off: timer_ringing
+#       - timing:
+#           - ON for at least 10s
+#         then:
+#           - button.press: factory_reset_btn
 
-output:
-  - platform: ledc
-    pin: GPIO47
-    id: backlight_output
+# output:
+#   - platform: ledc
+#     pin: GPIO47
+#     id: backlight_output
 
-light:
-  - platform: monochromatic
-    id: led
-    name: Screen
-    icon: "mdi:television"
-    entity_category: config
-    output: backlight_output
-    restore_mode: RESTORE_DEFAULT_ON
-    default_transition_length: 250ms
+# light:
+#   - platform: monochromatic
+#     id: led
+#     name: Screen
+#     icon: "mdi:television"
+#     entity_category: config
+#     output: backlight_output
+#     restore_mode: RESTORE_DEFAULT_ON
+#     default_transition_length: 250ms
 
-i2c:
-  scl: GPIO18
-  sda: GPIO8
+#i2c:
+#  scl: GPIO18
+#  sda: GPIO8
+
+# i2s_audio:
+#   - id: i2s_audio_bus
+#     i2s_lrclk_pin: GPIO45
+#     i2s_bclk_pin: GPIO17
+#     i2s_mclk_pin: GPIO2
 
 i2s_audio:
-  - id: i2s_audio_bus
-    i2s_lrclk_pin: GPIO45
-    i2s_bclk_pin: GPIO17
-    i2s_mclk_pin: GPIO2
+  - id: i2s_in
+    i2s_lrclk_pin: GPIO8
+    i2s_bclk_pin: GPIO7
+  - id: i2s_out
+    i2s_lrclk_pin: GPIO4
+    i2s_bclk_pin: GPIO3
 
-audio_adc:
-  - platform: es7210
-    id: es7210_adc
-    bits_per_sample: 16bit
-    sample_rate: 16000
+# audio_adc:
+#   - platform: es7210
+#     id: es7210_adc
+#     bits_per_sample: 16bit
+#     sample_rate: 16000
 
-audio_dac:
-  - platform: es8311
-    id: es8311_dac
-    bits_per_sample: 16bit
-    sample_rate: 48000
+# audio_dac:
+#   - platform: es8311
+#     id: es8311_dac
+#     bits_per_sample: 16bit
+#     sample_rate: 48000
 
 microphone:
-  - platform: i2s_audio
-    id: box_mic
-    sample_rate: 16000
-    i2s_din_pin: GPIO16
-    bits_per_sample: 16bit
-    adc_type: external
+  platform: i2s_audio
+  id: box_mic
+  adc_type: external
+  i2s_audio_id: i2s_in
+  i2s_din_pin: GPIO6
+  pdm: false
+  channel: left
+  bits_per_sample: 32bit
 
 speaker:
-  - platform: i2s_audio
-    id: box_speaker
-    i2s_dout_pin: GPIO15
-    dac_type: external
-    sample_rate: 48000
-    bits_per_sample: 16bit
-    channel: left
-    audio_dac: es8311_dac
-    buffer_duration: 100ms
+  platform: i2s_audio
+  id: box_speaker
+  dac_type: external
+  i2s_audio_id: i2s_out
+  i2s_dout_pin: GPIO2
+  #mode: mono
 
 media_player:
   - platform: speaker
@@ -223,8 +239,8 @@ micro_wake_word:
   id: mww
   models:
     - okay_nabu
-    - hey_mycroft
-    - hey_jarvis
+#    - hey_mycroft
+#    - hey_jarvis
   on_wake_word_detected:
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
@@ -758,8 +774,8 @@ color:
 
 spi:
   - id: spi_bus
-    clk_pin: 7
-    mosi_pin: 6
+    clk_pin: 12
+    mosi_pin: 13
 
 display:
   - platform: ili9xxx
@@ -767,10 +783,10 @@ display:
     model: S3BOX
     invert_colors: false
     data_rate: 40MHz
-    cs_pin: 5
-    dc_pin: 4
+    cs_pin: 11
+    dc_pin: 10
     reset_pin:
-      number: 48
+      number: 9
       inverted: true
     update_interval: never
     pages:
@@ -827,3 +843,8 @@ display:
           it.fill(Color::BLACK);
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
+
+sensor:
+  - platform: internal_temperature
+    accuracy_decimals: 1
+    name: "Internal Temp"
