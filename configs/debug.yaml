@@ -1,0 +1,25 @@
+# packages:
+#   # shorthand form github://username/repository/[folder/]file-path.yml[@branch-or-tag]
+#   #remote_package_shorthand: github://esphome/non-existant-repo/file1.yml@main
+
+#   remote_package_files:
+#     url: https://github.com/petrix-h/esphome
+#     files: [configs/debug.yaml]  # optional; if not specified, all files will be included
+#     ref: main  # optional
+#     refresh: always  # optional
+
+debug:
+  update_interval: 5s
+
+sensor:
+  - platform: debug
+    free:
+      name: "Heap Free"
+    block:
+      name: "Heap Max Block"
+    loop_time:
+      name: "Loop Time"
+    psram:
+      name: "Free PSRAM"
+    cpu_frequency:
+      name: "CPU Frequency"
