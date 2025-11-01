@@ -192,7 +192,7 @@ speaker:
     dac_type: external
     i2s_audio_id: i2s_out
     i2s_dout_pin: GPIO2
-    sample_rate: 16000
+    sample_rate: 48000
     
     #bits_per_sample: 32bit
     #buffer_duration: 100ms
@@ -213,7 +213,7 @@ media_player:
     #buffer_size: 10000
     #codec_support_enabled: false
     task_stack_in_psram: true
-    buffer_size: 20000
+    #buffer_size: 20000
     #volume_min: 0.5
     #volume_max: 0.8
     #media_pipeline: 
@@ -223,8 +223,8 @@ media_player:
     #  num_channels: 1
     announcement_pipeline:
       speaker: box_speaker
-      format: WAV
-      sample_rate: 16000
+      format: FLAC
+      sample_rate: 48000
       num_channels: 1  # S3 Box only has one output channel
     files:
       - id: timer_finished_sound
