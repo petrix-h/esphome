@@ -64,6 +64,9 @@ esp32:
   framework:
     type: esp-idf
 
+debug:
+  update_interval: 5s
+
 psram:
   mode: octal
   speed: 80MHz
@@ -189,7 +192,7 @@ speaker:
     dac_type: external
     i2s_audio_id: i2s_out
     i2s_dout_pin: GPIO2
-    sample_rate: 48000
+    sample_rate: 16000
     
     #bits_per_sample: 32bit
     #buffer_duration: 100ms
@@ -209,7 +212,8 @@ media_player:
     id: speaker_media_player
     #buffer_size: 10000
     #codec_support_enabled: false
-    #task_stack_in_psram: true
+    task_stack_in_psram: true
+    buffer_size: 20000
     #volume_min: 0.5
     #volume_max: 0.8
     #media_pipeline: 
@@ -219,8 +223,8 @@ media_player:
     #  num_channels: 1
     announcement_pipeline:
       speaker: box_speaker
-      format: FLAC
-      sample_rate: 48000
+      format: WAV
+      sample_rate: 16000
       num_channels: 1  # S3 Box only has one output channel
     files:
       - id: timer_finished_sound
@@ -272,9 +276,9 @@ micro_wake_word:
 voice_assistant:
   id: va
   microphone: box_mic
-  #media_player: speaker_media_player
+  media_player: speaker_media_player
   #speaker: announcement_mixer_input_speaker_id
-  speaker: box_speaker
+  #speaker: box_speaker
   micro_wake_word: mww
   noise_suppression_level: 2
   auto_gain: 31dBFS
@@ -874,3 +878,15 @@ sensor:
   - platform: internal_temperature
     accuracy_decimals: 1
     name: "Internal Temp"
+
+  - platform: debug
+    free:
+      name: "Heap Free"
+    block:
+      name: "Heap Max Block"
+    loop_time:
+      name: "Loop Time"
+    psram:
+      name: "Free PSRAM"
+    cpu_frequency:
+      name: "CPU Frequency"
